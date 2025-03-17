@@ -1,5 +1,3 @@
-# Ignore API keys and cache
+# Ignore environment variables
 .env
-config.py
-.venv/
-__pycache__/
+config.py  # (Optional, if you want to keep config.py private)
