@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <title>Laminator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            position: relative;
+            font-family: 'Poppins', sans-serif;
+            color: white;
+            text-align: center;
+            background: url("{{ url_for('static', filename='img/comexi_background.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("{{ url_for('static', filename='img/comexi_background.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            filter: blur(10px);
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+        .container {
+            background: #2c2c2c;
+            padding: 40px;
+            border-radius: 12px;
+            max-width: 850px;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            text-align: left;
+        }
+
+        .form-label {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .form-control {
+            background: white;
+            color: black;
+            border: 1px solid #aaa;
+        }
+
+        .btn-custom {
+            width: 250px;
+            padding: 12px;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            border: none;
+            transition: 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+        .btn-primary { background: #444; color: white; }
+        .btn-secondary { background: #666; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-custom:hover { opacity: 0.85; }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2 class="text-center">⚙️ Laminator Configuration</h2>
+
+    <img src="{{ url_for('static', filename='img/laminator.png') }}" alt="Laminator"
+         class="img-fluid rounded mx-auto d-block"
+         style="max-width: 400px; margin: 20px auto;">
+
+    <!-- 🔹 Select scanned reel -->
+    <label class="form-label">Fill parameters from scanned reels:</label>
+    <select id="select-reel" class="form-control">
+        <option value="">Select a scanned reel</option>
+        {% for bobina in bobines.split(',') %}
+            <option value="{{ bobina }}">{{ bobina }}</option>
+        {% endfor %}
+    </select>
+    <button type="button" class="btn btn-primary btn-custom mt-2" onclick="fillReelParams()">🔄 Fill Parameters</button>
+
+    <form action="/processar_bobines" method="POST">
+        <input type="hidden" name="maquina" value="laminator">
+        <input type="hidden" name="treballador" value="{{ treballador }}">
+        <input type="hidden" name="bobines" value="{{ bobines }}">
+        <input type="hidden" name="num_noves_bobines" value="{{ num_noves_bobines or 1 }}">
+        <input type="hidden" name="comentaris" value="{{ comentaris }}">
+
+        <div class="row">
+            <div class="col-md-6"><label class="form-label">Tension (N):</label><input type="number" name="tensio" id="tensio" class="form-control" required></div>
+            <div class="col-md-6"><label class="form-label">Material Thickness (µm):</label><input type="number" name="gruix_material" id="gruix_material" class="form-control" required></div>
+            <div class="col-md-6"><label class="form-label">Width (mm):</label><input type="number" name="amplada" id="amplada" class="form-control" required></div>
+            <div class="col-md-6"><label class="form-label">Material Type:</label><input type="text" name="tipus_material" id="tipus_material" class="form-control" required></div>
+            <div class="col-md-6 mx-auto"><label class="form-label">Length (m):</label><input type="number" name="longitud" id="longitud" class="form-control" required></div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="/" class="btn btn-secondary btn-custom">⬅️ Back</a>
+            <button type="submit" class="btn btn-success btn-custom">🚀 Generate Reels</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function fillReelParams() {
+        const reelId = document.getElementById("select-reel").value;
+        if (!reelId) {
+            alert("❗ Please select a reel.");
+            return;
+        }
+
+        fetch(`/get_reel_params/${reelId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById("tensio").value = data.tensio;
+                    document.getElementById("gruix_material").value = data.gruix_material;
+                    document.getElementById("amplada").value = data.amplada;
+                    document.getElementById("tipus_material").value = data.tipus_material;
+                    document.getElementById("longitud").value = data.longitud;
+                } else {
+                    alert("❌ Could not retrieve reel parameters.");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+    }
+</script>
+
+</body>
+</html>

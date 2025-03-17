@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comexi Reel Traceability</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: url("{{ url_for('static', filename='img/comexi_background.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+            font-family: 'Poppins', sans-serif;
+            color: #d3d3d3;
+            text-align: center;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7); /* Dark overlay */
+            backdrop-filter: blur(10px); /* Full page blur effect */
+            z-index: -1;
+        }
+        .header {
+            background-color: rgba(26, 26, 26, 0.9);
+            padding: 15px 0;
+        }
+        .header img {
+            width: 150px;
+        }
+        /* ✅ Chatbot button - More noticeable in blue */
+        .btn-chatbot {
+            background: linear-gradient(90deg, #007bff, #0056b3); /* Blue gradient */
+            color: white;
+            font-size: 1.3rem;
+            padding: 12px 24px;
+            border-radius: 10px;
+            transition: 0.3s ease-in-out;
+            box-shadow: 0px 4px 8px rgba(0, 123, 255, 0.3);
+        }
+
+        .btn-chatbot:hover {
+            background: linear-gradient(90deg, #0056b3, #003d80);
+            box-shadow: 0px 4px 12px rgba(0, 123, 255, 0.5);
+        }
+
+        .container {
+            margin-top: 8%;
+            position: relative;
+            z-index: 1;
+        }
+        .main-title {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 40px;
+        }
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .btn-custom {
+            width: 350px;
+            padding: 20px;
+            font-size: 1.5rem;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: none;
+            background: #333333; /* Solid dark gray buttons */
+            color: #ffffff;
+            transition: 0.3s ease;
+        }
+        .btn-custom:hover {
+            background: #555555; /* Slightly lighter gray on hover */
+        }
+        footer {
+            margin-top: 50px;
+            font-size: 0.9rem;
+            color: #f0f0f0;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- 🔹 HEADER BAR -->
+<div class="header">
+    <img src="{{ url_for('static', filename='img/comexi_logo.png') }}" alt="Comexi Logo">
+</div>
+
+<!-- 🔹 MAIN CONTAINER -->
+<div class="container">
+    <h1 class="main-title">Comexi ReelTrack</h1>
+
+    <div class="btn-container">
+        <a href="/crear_bobina_verge" class="btn btn-custom">Create Primary Reel</a>
+        <a href="/crear_bobines" class="btn btn-custom">Create New Reels</a>
+        <a href="/consulta" class="btn btn-custom">Check Traceability</a>
+    </div>
+
+    <!-- 🔹 Chatbot Button -->
+    <div class="text-center mt-4">
+        <a href="/chatbot" class="btn btn-primary btn-lg btn-chatbot">💬 Open Comexi's Chatbot</a>
+    </div>
+
+</div>
+
+<!-- 🔹 FOOTER -->
+<footer>Developed by Comexi's team 🚀</footer>
+
+</body>
+</html>

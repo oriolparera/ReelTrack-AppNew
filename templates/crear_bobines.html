@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <title>Escanejar i Crear Bobines</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* ✅ Full background with blur effect like in index.html */
+        body {
+            position: relative;
+            font-family: 'Poppins', sans-serif;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url("{{ url_for('static', filename='img/comexi_background.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        /* ✅ Background image with blur */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("{{ url_for('static', filename='img/comexi_background.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            filter: blur(10px); /* 🔹 Adds blur effect */
+            z-index: -2;
+        }
+
+        /* ✅ Dark overlay for readability */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6); /* Dark overlay */
+            z-index: -1;
+        }
+
+        /* ✅ Main container (NO transparency, solid background) */
+        .container {
+            background: #2c2c2c;  /* Dark gray */
+            padding: 40px;
+            border-radius: 12px;
+            max-width: 850px;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ✅ Labels: Bigger & left-aligned */
+        .form-label {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: left;
+            display: block;
+            color: white;
+        }
+
+        /* ✅ White input boxes */
+        .form-control {
+            background: white;
+            color: black;
+            border: 1px solid #aaa;
+        }
+        .form-control:focus {
+            background: white;
+            color: black;
+            border-color: #444;
+        }
+
+        /* ✅ Buttons */
+        .btn-custom {
+            width: 250px;
+            padding: 12px;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            border: none;
+            transition: 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+        .btn-primary { background: #444; color: white; }
+        .btn-secondary { background: #666; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-custom:hover { opacity: 0.85; }
+
+        /* ✅ Two-column layout */
+        .row .col-md-6 {
+            margin-bottom: 15px;
+        }
+
+        /* ✅ Style for scanned reel list */
+        .list-group-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* ✅ Space between Reel ID and delete button */
+        .list-group-item span {
+            flex-grow: 1;
+            text-align: left;
+            padding-right: 10px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>📌 Scan Reels and Select Machine</h2>
+
+    <!-- 🔹 QR Code Scanner -->
+    <div class="text-center mt-3">
+        <div id="reader" style="width: 300px; margin: auto;"></div>
+    </div>
+
+    <!-- 🔹 Inputs in Two Columns -->
+    <div class="row">
+        <div class="col-md-6">
+            <label class="form-label">Scan or Enter Reel ID:</label>
+            <input type="text" id="origen_id" class="form-control" placeholder="Reel ID" value="{{ R5MKJWCF }}">
+            <button type="button" class="btn btn-primary mt-2 btn-custom" onclick="afegirBobina()">Add Reel</button>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Technician Name:</label>
+            <input type="text" id="nom_treballador" class="form-control" placeholder="Enter your name" required>
+        </div>
+    </div>
+
+    <!-- 🔹 List of scanned reels -->
+    <h5>Scanned Reels:</h5>
+    <ul id="llista_bobines" class="list-group mb-3"></ul>
+
+    <div class="row">
+        <div class="col-md-6">
+            <label class="form-label">Select Machine:</label>
+            <select id="maquina" class="form-select">
+                <option value="flexo">Flexo Printer</option>
+                <option value="laminator">Laminator</option>
+                <option value="slitter">Slitter</option>
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Number of Output Reels:</label>
+            <input type="number" id="num_noves_bobines" class="form-control" min="1" value="1" required>
+        </div>
+    </div>
+
+    <!-- 🔹 Comments -->
+    <div class="mb-3">
+        <label class="form-label">Comments (Optional):</label>
+        <textarea id="comentaris" class="form-control" rows="2" placeholder="Comments"></textarea>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="/" class="btn btn-secondary btn-custom me-2">⬅️ Back to Portal</a>
+        <button class="btn btn-success btn-custom" onclick="redirigirAMaquina()">➡️ Continue</button>
+    </div>
+</div>
+
+<script>
+    let bobinesEscanejades = new Set();
+
+    function afegirBobinaEscanejada(id) {
+        if (bobinesEscanejades.has(id)) {
+            alert("❗ This reel has already been scanned.");
+            return;
+        }
+        bobinesEscanejades.add(id);
+        document.getElementById('origen_id').value = id;
+        afegirBobina();
+    }
+
+    function iniciarEscaneig() {
+        let scanner = new Html5Qrcode("reader");
+        scanner.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: 250 },
+            (decodedText) => {
+                afegirBobinaEscanejada(decodedText);
+            },
+            (errorMessage) => {}
+        );
+    }
+
+    function afegirBobina() {
+        const idBobina = document.getElementById('origen_id').value.trim();
+        if (!idBobina) {
+            alert('❗ Enter a valid reel ID.');
+            return;
+        }
+        if (bobinesEscanejades.has(idBobina)) {
+            alert("❗ This reel has already been added.");
+            return;
+        }
+
+        fetch(`/verificar_bobina/${idBobina}`)
+            .then(response => response.json())
+            .then(data => {
+                if (!data.existe) {
+                    alert("❌ This reel does not exist in the database.");
+                    return;
+                }
+                bobinesEscanejades.add(idBobina);
+                const llista = document.getElementById('llista_bobines');
+                const li = document.createElement('li');
+                li.className = 'list-group-item';
+
+                const span = document.createElement('span');
+                span.textContent = idBobina;
+
+                const btnEliminar = document.createElement('button');
+                btnEliminar.className = 'btn btn-danger btn-sm';
+                btnEliminar.textContent = '🗑️';
+                btnEliminar.onclick = () => {
+                    bobinesEscanejades.delete(idBobina);
+                    li.remove();
+                };
+
+                li.appendChild(span);
+                li.appendChild(btnEliminar);
+                llista.appendChild(li);
+                document.getElementById('origen_id').value = '';
+            });
+    }
+
+function redirigirAMaquina() {
+    const treballador = document.getElementById('nom_treballador').value.trim();
+    const maquina = document.getElementById('maquina').value;
+    const numNovesBobines = document.getElementById('num_noves_bobines').value.trim();
+    const comentaris = document.getElementById('comentaris').value;
+
+    // Convert scanned reels to string
+    const bobinesText = Array.from(bobinesEscanejades).join(',');
+
+    // ✅ Check if all fields are filled before continuing
+    if (!treballador) {
+        alert("❗ Please enter your name before continuing.");
+        return;
+    }
+    if (bobinesEscanejades.size === 0) {
+        alert("❗ You must scan at least one reel before continuing.");
+        return;
+    }
+    if (!numNovesBobines || numNovesBobines <= 0) {
+        alert("❗ Enter a valid number of output reels.");
+        return;
+    }
+
+    // ✅ Debugging Console Logs (To check the values)
+    console.log("🔍 Technician:", treballador);
+    console.log("🔍 Machine:", maquina);
+    console.log("🔍 Scanned Reels:", bobinesText);
+    console.log("🔍 Number of Output Reels:", numNovesBobines);
+    console.log("🔍 Comentaris:", comentaris);
+
+    // ✅ Redirect to the selected machine page with parameters
+    window.location.href = `/maquina/${maquina}?treballador=${encodeURIComponent(treballador)}&bobines=${encodeURIComponent(bobinesText)}&num_noves_bobines=${numNovesBobines}&comentaris=${comentaris}`;
+}
+
+
+</script>
+
+</body>
+</html>

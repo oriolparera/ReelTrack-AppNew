@@ -1,0 +1,104 @@
+/* Fondo general */
+body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Contenedor principal */
+.container {
+    margin-top: 50px;
+}
+
+/* Título principal */
+h2 {
+    color: #333;
+}
+
+/* Tablas */
+.table {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Botones */
+.btn {
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover en botones */
+.btn:hover {
+    opacity: 0.9;
+}
+
+/* Toasts */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1055;
+}
+
+/* Input de búsqueda */
+#search {
+    margin-bottom: 20px;
+}
+
+/* QR Codes */
+.img-thumbnail {
+    border: 2px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Footer */
+footer {
+    margin-top: 50px;
+    color: #aaa;
+}
+
+/* Esquema (Graph) */
+#network {
+    width: 80%;
+    height: 600px;
+    margin: 20px auto;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+}
+
+/* Formularios */
+input, select, button {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Alertas */
+.alert {
+    border-radius: 5px;
+}
+
+/* Links */
+a {
+    text-decoration: none;
+    color: #007BFF;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Página principal */
+.logo {
+    width: 120px;
+    margin-bottom: 20px;
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #333;
+}

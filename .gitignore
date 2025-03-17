@@ -1,0 +1,5 @@
+# Ignore API keys and cache
+.env
+config.py
+.venv/
+__pycache__/

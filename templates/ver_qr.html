@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reel Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* ✅ Background styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url("{{ url_for('static', filename='img/comexi_background.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        /* ✅ Blurred background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("{{ url_for('static', filename='img/comexi_background.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            filter: blur(10px);
+            z-index: -2;
+        }
+
+        /* ✅ Dark overlay */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+        /* ✅ Main container */
+        .container {
+            background: #2c2c2c;
+            padding: 40px;
+            border-radius: 12px;
+            max-width: 950px; /* 🔹 Increased for better balance */
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ✅ Flexbox layout to align QR and table */
+        .content-wrapper {
+            display: flex;
+            align-items: flex-start; /* Aligns to top */
+            justify-content: center;
+            gap: 30px; /* Space between QR and table */
+            margin-top: 20px;
+        }
+
+        /* ✅ QR Code container */
+        .qr-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-container img {
+            width: 280px;  /* 🔹 Adjusted QR size */
+            height: 280px;
+            border-radius: 10px;
+            background: white;
+            padding: 12px;
+        }
+
+        .print-btn {
+            width: 280px;
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: none;
+            transition: 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            background: #5081ff;
+            color: white;
+            margin-top: 10px;
+        }
+
+        /* ✅ Table styling */
+        .table-container {
+            width: 100%;
+            flex-grow: 1; /* Ensures table expands naturally */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            font-size: 1rem;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            width: 50%; /* ✅ Equal column width */
+            vertical-align: top; /* ✅ Aligns text at the top */
+            word-wrap: break-word;
+            white-space: normal;
+        }
+
+        th {
+            background: #444;
+            color: white;
+            font-weight: bold;
+        }
+
+        td {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* ✅ Buttons */
+        .btn-custom {
+            width: 220px;
+            padding: 10px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            border: none;
+            transition: 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-primary { background: #5081ff; color: white; }
+        .btn-secondary { background: #666; color: white; }
+        .btn-custom:hover { opacity: 0.85; }
+
+        /* ✅ Title */
+        h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>📌 Reel ID: {{ bobina[1] }}</h2>
+
+    <div class="content-wrapper">
+        <!-- ✅ QR Code -->
+        <div class="qr-container">
+            <img src="/qrs/qr_bobina_{{ bobina[1] }}.png" alt="QR Code">
+            <a href="/imprimir_qr/{{ bobina[1] }}" class="print-btn" target="_blank">🖨️ Print QR</a>
+        </div>
+
+        <!-- ✅ Reel Details Table -->
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>📅 Date</th>
+                    <td>{{ bobina[5] }}</td>
+                </tr>
+                <tr>
+                    <th>👤 Operator</th>
+                    <td>{{ bobina[7] or ' ' }}</td>
+                </tr>
+                <tr>
+                    <th>🛠️ Machine</th>
+                    <td>{{ bobina[6] or 'Primary Reel' }}</td>
+                </tr>
+                <tr>
+                    <th>🔧 Tension</th>
+                    <td>{{ bobina[8] or 'Primary Reel' }} N</td>
+                </tr>
+                <tr>
+                    <th>🧵 Material Type</th>
+                    <td>{{ bobina[11] or 'Primary Reel' }}</td>
+                </tr>
+                <tr>
+                    <th>📏 Thickness</th>
+                    <td>{{ bobina[9] or 'Primary Reel' }} µm</td>
+                </tr>
+                <tr>
+                    <th>📐 Width</th>
+                    <td>{{ bobina[10] or 'Primary Reel' }} mm</td>
+                </tr>
+                <tr>
+                    <th>📏 Length</th>
+                    <td>{{ bobina[12] or 'Primary Reel' }} m</td>
+                </tr>
+                <tr>
+                    <th>📜 Additional Information</th>
+                    <td style="word-wrap: break-word; white-space: normal;">
+                        <div style="max-width: 100%; overflow-wrap: break-word;">{{ bobina[3] or ' ' }}</div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>🔄 Previous Reel(s)</th>
+                    <td>
+                        {% if bobina[4] and bobina[4] != "Primary Reel" %}
+                            {% set previous_reels = bobina[4].split(',') %}
+                            {% for prev_reel in previous_reels %}
+                                <a href="/bobina/{{ prev_reel.strip() }}" class="btn btn-primary btn-sm">🔗 {{ prev_reel.strip() }}</a>
+                            {% endfor %}
+                        {% else %}
+                            Primary Reel
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <a href="/consulta" class="btn btn-custom btn-secondary mt-3">⬅️ Back</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <title>Define Primary Reel Parameters</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* ✅ Background image with blur */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("{{ url_for('static', filename='img/comexi_background.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            filter: blur(10px); /* 🔹 Adds blur effect */
+            z-index: -2;
+        }
+
+        /* ✅ Dark overlay for readability */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6); /* Dark overlay */
+            z-index: -1;
+        }
+
+        /* ✅ Main container (Centered & Fully Opaque) */
+        .container {
+            background: #2c2c2c;  /* Dark gray */
+            padding: 40px;
+            border-radius: 12px;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            max-width: 850px;
+
+            /* ✅ CENTERING */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* ✅ Title Box - Fully touching edges */
+        .title-box {
+
+            padding: 15px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            width: calc(100% + 80px);
+            margin: -40px -40px 30px -40px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            letter-spacing: 1.5px;
+        }
+        /* ✅ Input Fields */
+        .form-label {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .form-control {
+            background-color: white;
+            color: black;
+            border: 1px solid #555;
+            font-size: 1rem;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        /* ✅ Two-column layout */
+        .row .col-md-6 {
+            padding: 5px;
+        }
+
+        /* ✅ Buttons */
+        .btn {
+            border-radius: 8px;
+            font-size: 1.2rem;
+            padding: 12px 20px;
+            margin-top: 10px;
+        }
+
+        /* ✅ QR Section Styling */
+        .qr-container {
+            margin-top: 40px;
+            padding: 20px;
+            background: #3a3a3a;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- 🔹 Main Centered Container -->
+<div class="container text-center">
+    <div class="title-box">Define Primary Reel Parameters</div>
+
+    <form action="/crear_bobina_verge" method="POST">
+        <div class="row">
+            <div class="col-md-6">
+                <label class="form-label">Tension (N):</label>
+                <input type="number" name="tensio" class="form-control form-control-lg" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Material Thickness (µm):</label>
+                <input type="number" name="gruix_material" class="form-control form-control-lg" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Width (mm):</label>
+                <input type="number" name="amplada" class="form-control form-control-lg" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Material Type:</label>
+                <input type="text" name="tipus_material" class="form-control form-control-lg" required>
+            </div>
+        </div>
+        <div class="col-md-6 mx-auto">
+            <label class="form-label">Length (m):</label>
+            <input type="number" name="longitud" class="form-control form-control-lg" required>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="/" class="btn btn-secondary">⬅️ Back</a>
+            <button type="submit" class="btn btn-success">🚀 Create Primary Reel</button>
+        </div>
+    </form>
+
+    {% if id_bobina and ruta_qr %}
+    <div class="qr-container">
+        <h2>✅ Primary Reel Created</h2>
+        <img src="{{ ruta_qr }}" alt="Codi QR" class="img-thumbnail" width="250">
+        <p style="font-size: 1.3rem; font-weight: bold;"><strong>ID Bobina:</strong> {{ id_bobina }}</p>
+        <a href="/imprimir_qr/{{ id_bobina }}" class="btn btn-primary mt-3" target="_blank">🖨️ Print QR</a>
+    </div>
+    {% endif %}
+</div>
+
+</body>
+</html>

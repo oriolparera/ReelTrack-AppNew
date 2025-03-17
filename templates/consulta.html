@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reel Management Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* ✅ Background styling */
+        body {
+            background: url("{{ url_for('static', filename='img/comexi_background.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+            font-family: 'Poppins', sans-serif;
+            color: #d3d3d3;
+            text-align: center;
+        }
+
+        /* ✅ Dark overlay for readability */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            z-index: -1;
+        }
+
+        /* ✅ Container */
+        .container {
+            margin-top: 50px;
+            max-width: 95%;
+        }
+
+        /* ✅ Header section */
+        .header-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            flex-grow: 1;
+            margin-left: 15px;
+            padding: 12px;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            background: #ffffff;
+            color: black;
+        }
+
+        /* ✅ Table */
+        .table-container {
+            overflow-x: auto;
+            max-height: 75vh;
+            width: 100%;
+        }
+
+        .table {
+            table-layout: fixed; /* ✅ Fixed column width */
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: #f5f5f5;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* ✅ Column widths */
+        th:nth-child(1) { width: 15%; } /* Reel ID */
+        th:nth-child(2) { width: 20%; } /* Previous Reels */
+        th:nth-child(3) { width: 15%; } /* Creation Date */
+        th:nth-child(4) { width: 15%; } /* Technician */
+        th:nth-child(5) { width: 8%; } /* System (Smaller) */
+        th:nth-child(6) { width: 15%; } /* Additional Info */
+        th:nth-child(7) { width: 22%; } /* Actions (Wider) */
+
+        /* ✅ Darker gray-black for the header row */
+        thead th {
+            background: rgba(75, 75, 75, 0.8) !important;
+            color: #ffffff !important;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            border-bottom: 2px solid #444;
+        }
+
+        tbody td {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px;
+            text-align: center;
+            vertical-align: middle;
+            word-wrap: break-word; /* ✅ Prevents overflow */
+            overflow-wrap: break-word;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* ✅ Style only the Reel ID column */
+        tbody td:first-child {
+            background: rgba(250, 250, 250, 0.8);
+            color: black;
+            font-weight: bold;
+        }
+
+        /* ✅ Dark gray background for the Actions column */
+        td.action-buttons {
+            background: rgba(125, 125, 125, 0.8);
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        /* ✅ Buttons */
+        .btn-custom {
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            border: none;
+            transition: 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .btn-info { background: #5081ff; color: white; }
+        .btn-warning { background: #f0ad4e; color: white; }
+        .btn-danger { background: #bd4845; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+
+        .btn-custom:hover { opacity: 0.85; }
+
+        /* ✅ Back button - same size as search bar */
+        .back-button {
+            width: 230px;
+            height: 45px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            text-decoration: none;
+            background: #5081ff;
+            color: white;
+            border: none;
+            transition: 0.3s ease;
+        }
+
+        .back-button:hover {
+            opacity: 0.85;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('search');
+            searchInput.addEventListener('input', function () {
+                const filter = searchInput.value.toUpperCase();
+                const rows = document.querySelectorAll("tbody tr");
+
+                rows.forEach(row => {
+                    const idBobina = row.cells[0].textContent.toUpperCase();
+                    const previousReels = row.cells[1].textContent.toUpperCase();
+                    const creationDate = row.cells[2].textContent.toUpperCase();
+                    const technician = row.cells[3].textContent.toUpperCase();
+                    const system = row.cells[4].textContent.toUpperCase();
+                    const additionalInfo = row.cells[5].textContent.toUpperCase();
+                    const actions = row.cells[6].textContent.toUpperCase(); // ✅ Now includes Actions
+
+                    if (
+                        idBobina.includes(filter) ||
+                        previousReels.includes(filter) ||
+                        creationDate.includes(filter) ||
+                        system.includes(filter) ||
+                        technician.includes(filter) ||
+                        additionalInfo.includes(filter) ||
+                        actions.includes(filter) // ✅ Now actions are searchable too!
+                    ) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            });
+        });
+
+        function eliminarBobina(id_bobina) {
+            if (!id_bobina) {
+                alert("❗ Error: Missing Reel ID.");
+                return;
+            }
+
+            if (confirm("❗ Are you sure you want to delete this reel?")) {
+                fetch(`/eliminar_bobina/${id_bobina}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("✅ Reel successfully deleted.");
+                        location.reload();  // ✅ Reload page to update table
+                    } else {
+                        alert("❌ Error deleting the reel: " + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("❌ Error deleting the reel. See console for details.");
+                });
+            }
+        }
+    </script>
+</head>
+
+<body>
+
+<div class="container">
+    <!-- 🔹 Header Section -->
+    <div class="header-section">
+        <a href="/" class="btn btn-custom back-button">Back</a>
+        <input type="text" id="search" class="form-control search-bar" placeholder="Search by any field">
+    </div>
+
+    <!-- 🔹 Table -->
+    <div class="table-container">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Reel ID</th>
+                    <th>Previous Reels</th>
+                    <th>Creation Date</th>
+                    <th>Technician</th>
+                    <th>System</th>
+                    <th>Additional Info</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bobina in bobines %}
+                <tr>
+                    <td>{{ bobina[1] }}</td>
+                    <td>{{ bobina[4] or 'Primary Reel' }}</td>
+                    <td>{{ bobina[5] }}</td>
+                    <td>{{ bobina[7] or 'N/A' }}</td>
+                    <td>{{ bobina[6] or 'N/A' }}</td>
+                    <td>{{ bobina[3] or 'N/A' }}</td>
+                    <td class="action-buttons">
+                        <a href="/bobina/{{ bobina[1] }}" class="btn btn-custom btn-info">Details</a>
+                        <a href="/esquema/{{ bobina[1] }}" class="btn btn-custom btn-warning">Scheme</a>
+                        <button class="btn btn-custom btn-danger" onclick="eliminarBobina('{{ bobina[1] }}')">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
